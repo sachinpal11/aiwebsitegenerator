@@ -9,7 +9,9 @@ import { createClient } from "@/lib/supabase/server";
 export type LoginState = { error?: string; sentTo?: string };
 
 export async function sendMagicLink(_prev: LoginState, formData: FormData): Promise<LoginState> {
-  if (!hasSupabase()) return { error: "Supabase is not configured yet. Add the keys to .env.local." };
+  if (!hasSupabase()) {
+    return { error: "Sign-in isn't set up yet: the Supabase URL and publishable key are missing from the environment variables." };
+  }
 
   const email = z.email().safeParse(formData.get("email"));
   if (!email.success) return { error: "Please enter a valid email address." };
