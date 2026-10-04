@@ -29,5 +29,5 @@ export async function sendMagicLink(_prev: LoginState, formData: FormData): Prom
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/");
+  redirect("/login");
 }

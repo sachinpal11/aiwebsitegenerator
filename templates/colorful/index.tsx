@@ -5,7 +5,7 @@ import { getTemplateMeta } from "../meta";
 import { slots } from "./schema";
 import { EnquiryForm } from "../shared/EnquiryForm";
 import { ImageSlot } from "../shared/ImageSlot";
-import { telHref, whatsappHref } from "../shared/phone";
+import { isPhone, telHref, whatsappHref } from "../shared/phone";
 import type { CoreContent, TemplateDefinition, TemplateProps } from "../types";
 
 const display = Bricolage_Grotesque({ subsets: ["latin"], weight: ["600", "800"], variable: "--font-display" });
@@ -40,12 +40,14 @@ function ColorfulTemplate({ businessName, city, content, palette, images, siteId
               >
                 {hero.cta_label}
               </a>
-              <a
-                href={whatsappHref(contact.phone)}
-                className="rounded-full border-2 border-current px-6 py-3 font-semibold transition hover:-translate-y-0.5"
-              >
-                WhatsApp
-              </a>
+              {isPhone(contact.phone) && (
+                <a
+                  href={whatsappHref(contact.phone)}
+                  className="rounded-full border-2 border-current px-6 py-3 font-semibold transition hover:-translate-y-0.5"
+                >
+                  WhatsApp
+                </a>
+              )}
             </div>
           </div>
           <ImageSlot
@@ -112,12 +114,14 @@ function ColorfulTemplate({ businessName, city, content, palette, images, siteId
           <h2 className="font-(family-name:--font-display) text-4xl font-extrabold">Say hello</h2>
           <p className="mt-6 text-lg">{contact.address}</p>
           <p className="mt-2 text-(--c-muted)">{contact.hours}</p>
-          <a
-            href={telHref(contact.phone)}
-            className="mt-6 inline-block rounded-full bg-(--c-surface) px-5 py-2 font-semibold text-(--c-accent)"
-          >
-            {contact.phone}
-          </a>
+          {isPhone(contact.phone) && (
+            <a
+              href={telHref(contact.phone)}
+              className="mt-6 inline-block rounded-full bg-(--c-surface) px-5 py-2 font-semibold text-(--c-accent)"
+            >
+              {contact.phone}
+            </a>
+          )}
         </div>
         <div className="rounded-3xl bg-(--c-surface) p-6 md:p-8">
           <EnquiryForm siteId={siteId} variant="boxed" submitLabel="Send" />

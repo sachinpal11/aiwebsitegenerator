@@ -2,7 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { hasSupabase, supabaseAnonKey, supabaseUrl } from "@/lib/env";
 
-const PROTECTED = ["/dashboard"];
+const PROTECTED = ["/dashboard", "/preview", "/build"];
+// "/" and "/templates" do their own redirects in the page (see app/page.tsx, lib/owner.ts).
 
 /** Refreshes the auth session cookie on every request and guards owner-only pages. */
 export async function updateSession(request: NextRequest) {
@@ -31,7 +32,8 @@ export async function updateSession(request: NextRequest) {
   if (!signedIn && PROTECTED.some((p) => pathname.startsWith(p))) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    url.searchParams.set("next", pathname);
+    url.search = "";
+    url.searchParams.set("next", pathname + request.nextUrl.search); // come back to the same page, query included
     return NextResponse.redirect(url);
   }
 

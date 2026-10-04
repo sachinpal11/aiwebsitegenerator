@@ -5,7 +5,7 @@ import { getTemplateMeta } from "../meta";
 import { slots } from "./schema";
 import { EnquiryForm } from "../shared/EnquiryForm";
 import { ImageSlot } from "../shared/ImageSlot";
-import { telHref, whatsappHref } from "../shared/phone";
+import { isPhone, telHref, whatsappHref } from "../shared/phone";
 import type { CoreContent, TemplateDefinition, TemplateProps } from "../types";
 
 const display = Sora({ subsets: ["latin"], weight: ["500", "600"], variable: "--font-display" });
@@ -20,9 +20,11 @@ function ModernTemplate({ businessName, city, content, palette, images, siteId }
     >
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <span className="font-(family-name:--font-display) text-lg font-semibold tracking-tight">{businessName}</span>
-        <a href={telHref(contact.phone)} className="text-sm font-medium text-(--c-accent) hover:underline">
-          Call {contact.phone}
-        </a>
+        {isPhone(contact.phone) && (
+          <a href={telHref(contact.phone)} className="text-sm font-medium text-(--c-accent) hover:underline">
+            Call {contact.phone}
+          </a>
+        )}
       </header>
 
       <section className="mx-auto grid max-w-6xl items-center gap-10 px-6 pt-8 pb-20 md:grid-cols-[1.1fr_1fr] md:pt-16">
@@ -39,12 +41,14 @@ function ModernTemplate({ businessName, city, content, palette, images, siteId }
             >
               {hero.cta_label}
             </a>
-            <a
-              href={whatsappHref(contact.phone)}
-              className="rounded-md border border-(--c-ink)/15 px-5 py-3 font-medium transition hover:border-(--c-ink)/40"
-            >
-              WhatsApp us
-            </a>
+            {isPhone(contact.phone) && (
+              <a
+                href={whatsappHref(contact.phone)}
+                className="rounded-md border border-(--c-ink)/15 px-5 py-3 font-medium transition hover:border-(--c-ink)/40"
+              >
+                WhatsApp us
+              </a>
+            )}
           </div>
         </div>
         <ImageSlot images={images} slot="hero" label="Shop front or team" className="aspect-[4/3] w-full rounded-lg" />
@@ -82,14 +86,16 @@ function ModernTemplate({ businessName, city, content, palette, images, siteId }
               <dt className="text-sm text-(--c-muted)">Address</dt>
               <dd className="mt-1">{contact.address}</dd>
             </div>
-            <div>
-              <dt className="text-sm text-(--c-muted)">Phone</dt>
-              <dd className="mt-1">
-                <a href={telHref(contact.phone)} className="hover:text-(--c-accent)">
-                  {contact.phone}
-                </a>
-              </dd>
-            </div>
+            {isPhone(contact.phone) && (
+              <div>
+                <dt className="text-sm text-(--c-muted)">Phone</dt>
+                <dd className="mt-1">
+                  <a href={telHref(contact.phone)} className="hover:text-(--c-accent)">
+                    {contact.phone}
+                  </a>
+                </dd>
+              </div>
+            )}
             <div>
               <dt className="text-sm text-(--c-muted)">Hours</dt>
               <dd className="mt-1">{contact.hours}</dd>

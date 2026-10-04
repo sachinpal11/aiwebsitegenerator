@@ -9,7 +9,7 @@ export type CoreContent = {
   hero: { headline: string; subheadline: string; cta_label: string };
   about: { body: string };
   services: { name: string; description: string }[];
-  contact: { address: string; phone: string; hours: string };
+  contact: { address: string; phone?: string; hours: string };
 };
 
 export type ImageSlotDef = { key: string; label: string };

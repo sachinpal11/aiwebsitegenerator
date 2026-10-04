@@ -12,7 +12,8 @@ type Props = {
 export function ImageSlot({ images, slot, label, className = "" }: Props) {
   const src = images[slot];
   if (src) {
-    return <img src={src} alt={label} className={`object-cover ${className}`} />;
+    // no-referrer: Google-hosted photos can refuse requests that carry another site's address.
+    return <img src={src} alt={label} referrerPolicy="no-referrer" className={`object-cover ${className}`} />;
   }
   return (
     <div

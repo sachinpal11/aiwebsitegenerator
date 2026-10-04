@@ -1,3 +1,8 @@
+/** True only for something that looks like a real phone number (not "Available on request"). */
+export function isPhone(phone: string | undefined): phone is string {
+  return Boolean(phone && (phone.match(/\d/g)?.length ?? 0) >= 8);
+}
+
 /** "+91 98765 43210" -> "+919876543210" */
 export function telHref(phone: string) {
   return `tel:${phone.replace(/[^\d+]/g, "")}`;

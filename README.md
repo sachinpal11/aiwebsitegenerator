@@ -1,4 +1,4 @@
-# AI Website Generator for small Indian businesses
+# Sitewise.ai: AI website builder for small Indian businesses
 
 Card-based, no-prompt website builder. See the MVP spec for the full plan.
 
@@ -10,7 +10,7 @@ Card-based, no-prompt website builder. See the MVP spec for the full plan.
 4. In Supabase → Authentication → URL Configuration, add `http://localhost:3000/auth/callback` to the redirect URLs.
 5. `npm run dev`
 
-The template gallery (`/templates`) works without any keys.
+Signed-out visitors are sent to `/login`; signed-in owners land on `/dashboard`.
 
 ## Scripts
 

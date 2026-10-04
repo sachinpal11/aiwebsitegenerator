@@ -1,2 +1,3 @@
-/** Working product name; change it here once the real name is decided. */
-export const APP_NAME = "Dukaan Site";
+/** Product name, used everywhere in the UI. */
+export const APP_NAME = "Sitewise";
+export const APP_DOMAIN = "sitewise.ai";

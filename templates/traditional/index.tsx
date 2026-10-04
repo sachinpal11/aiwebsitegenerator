@@ -5,7 +5,7 @@ import { getTemplateMeta } from "../meta";
 import { slots } from "./schema";
 import { EnquiryForm } from "../shared/EnquiryForm";
 import { ImageSlot } from "../shared/ImageSlot";
-import { telHref, whatsappHref } from "../shared/phone";
+import { isPhone, telHref, whatsappHref } from "../shared/phone";
 import type { CoreContent, TemplateDefinition, TemplateProps } from "../types";
 
 const display = Marcellus({ subsets: ["latin"], weight: "400", variable: "--font-display" });
@@ -52,12 +52,14 @@ function TraditionalTemplate({ businessName, city, content, palette, images, sit
           >
             {hero.cta_label}
           </a>
-          <a
-            href={whatsappHref(contact.phone)}
-            className="border border-(--c-accent) px-6 py-3 tracking-wide text-(--c-accent) transition hover:bg-(--c-accent)/5"
-          >
-            WhatsApp
-          </a>
+          {isPhone(contact.phone) && (
+            <a
+              href={whatsappHref(contact.phone)}
+              className="border border-(--c-accent) px-6 py-3 tracking-wide text-(--c-accent) transition hover:bg-(--c-accent)/5"
+            >
+              WhatsApp
+            </a>
+          )}
         </div>
         <div className="mt-12 border border-(--c-accent)/30 p-2">
           <ImageSlot images={images} slot="hero" label="Main photo" className="aspect-[21/9] w-full" />
@@ -108,9 +110,11 @@ function TraditionalTemplate({ businessName, city, content, palette, images, sit
           <h2 className="font-(family-name:--font-display) text-3xl">Visit Us</h2>
           <p className="mt-6 text-lg">{contact.address}</p>
           <p className="mt-4 text-(--c-muted)">{contact.hours}</p>
-          <a href={telHref(contact.phone)} className="mt-6 inline-block text-xl text-(--c-accent)">
-            {contact.phone}
-          </a>
+          {isPhone(contact.phone) && (
+            <a href={telHref(contact.phone)} className="mt-6 inline-block text-xl text-(--c-accent)">
+              {contact.phone}
+            </a>
+          )}
         </div>
         <div className="border border-(--c-accent)/30 p-6">
           <h3 className="mb-5 font-(family-name:--font-display) text-xl">Send an Enquiry</h3>

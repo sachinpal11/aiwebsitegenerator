@@ -93,8 +93,8 @@ export const coreSlots = {
   about: group({ body: text(60) }),
   services: list({ name: text(4), description: text(20) }, 3, 6),
   contact: group({
-    address: text(20),
-    phone: text(4),
-    hours: text(16), // room for split timings, e.g. "8 am to 3:30 pm and 7 pm to 10:30 pm"
+    address: text(32), // real Indian addresses run long
+    phone: text(6, { optional: true }), // only real numbers, never AI-written
+    hours: text(32), // room for split timings, e.g. "Mon–Sat 10 am – 1 pm, 5 – 9 pm, Sun closed"
   }),
 } satisfies SlotSchema;
