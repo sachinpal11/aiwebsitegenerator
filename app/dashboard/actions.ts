@@ -2,9 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { businessTypes, styles } from "@/lib/business-types";
+import { styles } from "@/lib/business-types";
 import { ImportError, importPlaceFromLink, type ImportedPlace } from "@/lib/maps-import";
-import { palettes } from "@/lib/palettes";
+import { isPaletteId } from "@/lib/palettes";
 import { createClient } from "@/lib/supabase/server";
 import { templateMeta } from "@/templates/meta";
 
@@ -13,7 +13,7 @@ const ids = <T extends { id: string }>(xs: readonly T[]) => xs.map((x) => x.id) 
 /** Look choices, sent in both modes. */
 const Look = z.object({
   style: z.enum(styles),
-  palette: z.enum(ids(palettes)),
+  palette: z.string().refine(isPaletteId, "Please pick a colour"), // a preset, or "custom-rrggbb"
   template_id: z.enum(ids(templateMeta)),
 });
 
@@ -22,7 +22,7 @@ const Described = Look.extend({
   business_name: z.string().trim().min(2, "Please add your shop's name").max(60),
   city: z.string().trim().min(2, "Please add your city").max(40),
   owner_notes: z.string().trim().max(300).optional(),
-  business_type: z.enum(ids(businessTypes)),
+  business_type: z.string().trim().min(2, "Please choose your type of business").max(40), // a preset id, or the owner's own words
 });
 
 /** "Google link" mode: one link, everything else comes from Google. */

@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { businessTypes, type Style } from "@/lib/business-types";
-import { getPalette, palettes } from "@/lib/palettes";
+import { customPaletteId, getPalette, palettes } from "@/lib/palettes";
 import { templateMeta } from "@/templates/meta";
 import { samples } from "@/templates/samples";
 import { PinIcon } from "./GoogleImport";
@@ -52,10 +52,13 @@ export function Workspace({ hasProfile, initialStyle }: { hasProfile: boolean; i
   const [menu, setMenu] = useState<Menu>(null);
   const [listening, setListening] = useState(false);
   const [mode, setMode] = useState<Mode>("google");
+  const [customType, setCustomType] = useState("");
+  const [customHex, setCustomHex] = useState("#8b1a1a");
   const [link, setLink] = useState("");
   const rec = useRef<Recognition | null>(null);
 
-  const typeLabel = businessTypes.find((b) => b.id === type)!;
+  // A preset business type, or whatever the owner typed under "Something else?".
+  const typeLabel = businessTypes.find((b) => b.id === type)?.label ?? type;
   const pal = getPalette(palette);
   const previewSample = samples.some((s) => s.businessType === type) ? type : "salon";
   const previewHref = `/templates/${style}?sample=${previewSample}&palette=${palette}`;
@@ -70,6 +73,13 @@ export function Workspace({ hasProfile, initialStyle }: { hasProfile: boolean; i
     params.set("b", crypto.randomUUID()); // one build per press, even if the page is refreshed
     setLeaving(true);
     router.push(`/build?${params}`);
+  }
+
+  function applyCustomType() {
+    const t = customType.trim();
+    if (t.length < 2) return;
+    setType(t);
+    setMenu(null);
   }
 
   function quickStart(q: (typeof quickStarts)[number]) {
@@ -121,7 +131,7 @@ export function Workspace({ hasProfile, initialStyle }: { hasProfile: boolean; i
       <div className="flex items-center justify-between gap-3">
         <div className="relative z-30">
           <Pill onClick={() => setMenu(menu === "type" ? null : "type")} aria-expanded={menu === "type"}>
-            {typeLabel.label}
+            <span className="max-w-[12rem] truncate">{typeLabel}</span>
             <Chevron className={`size-4 transition ${menu === "type" ? "rotate-180" : ""}`} />
           </Pill>
           {menu === "type" && (
@@ -132,6 +142,34 @@ export function Workspace({ hasProfile, initialStyle }: { hasProfile: boolean; i
                   <span className="ml-auto text-xs text-white/40">{b.labelHi}</span>
                 </MenuItem>
               ))}
+              {/* Any other kind of business, in the owner's words */}
+              <div className="mt-1.5 border-t border-white/[0.08] px-1.5 pt-2.5 pb-1">
+                <p className="px-1.5 text-[12px] text-white/45">Something else? · कुछ और?</p>
+                <div className="mt-1.5 flex gap-1.5">
+                  <input
+                    value={customType}
+                    onChange={(e) => setCustomType(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        applyCustomType();
+                      }
+                    }}
+                    maxLength={40}
+                    placeholder="e.g. Yoga studio"
+                    aria-label="Your type of business"
+                    className="min-w-0 flex-1 rounded-lg bg-white/[0.05] px-2.5 py-1.5 text-[13.5px] text-white ring-1 ring-white/10 placeholder:text-white/30 focus:ring-[#1f9e8f] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={applyCustomType}
+                    disabled={customType.trim().length < 2}
+                    className="rounded-lg bg-[#123f3a] px-3 text-[13px] text-[#99f6e4] ring-1 ring-[#1f9e8f]/50 disabled:opacity-40"
+                  >
+                    Use
+                  </button>
+                </div>
+              </div>
             </Popover>
           )}
         </div>
@@ -273,6 +311,40 @@ export function Workspace({ hasProfile, initialStyle }: { hasProfile: boolean; i
                           {p.name}
                         </MenuItem>
                       ))}
+                    </div>
+                    {/* The owner's own brand colour */}
+                    <div className="mt-1.5 border-t border-white/[0.08] px-1.5 pt-2.5 pb-1">
+                      <p className="px-1.5 text-[12px] text-white/45">Your own colour · अपना रंग</p>
+                      <div className="mt-1.5 flex items-center gap-1.5">
+                        <input
+                          type="color"
+                          value={customHex}
+                          onChange={(e) => setCustomHex(e.target.value)}
+                          aria-label="Pick your colour"
+                          className="size-8 shrink-0 cursor-pointer rounded-lg border-0 bg-transparent p-0"
+                        />
+                        <input
+                          value={customHex}
+                          onChange={(e) => setCustomHex(e.target.value.startsWith("#") ? e.target.value : `#${e.target.value}`)}
+                          maxLength={7}
+                          spellCheck={false}
+                          aria-label="Colour code"
+                          className="w-[5.5rem] rounded-lg bg-white/[0.05] px-2.5 py-1.5 font-mono text-[13px] text-white ring-1 ring-white/10 focus:ring-[#1f9e8f] focus:outline-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const id = customPaletteId(customHex);
+                            if (!id) return;
+                            setPalette(id);
+                            setMenu(null);
+                          }}
+                          disabled={!customPaletteId(customHex)}
+                          className="ml-auto rounded-lg bg-[#123f3a] px-3 py-1.5 text-[13px] text-[#99f6e4] ring-1 ring-[#1f9e8f]/50 disabled:opacity-40"
+                        >
+                          Use colour
+                        </button>
+                      </div>
                     </div>
                   </Popover>
                 )}

@@ -106,8 +106,11 @@ export function PreviewStudio(props: Props) {
       if (res.remaining != null) setLeft(res.remaining);
       if (res.ok) {
         setWritten(true);
-        setVersion((v) => v + 1); // reload the preview with the new content
-        say({ role: "ai", text: first ? "Your website is written! Have a look on the right, and tell me what to change." : describeChanges(res.changed) });
+        if (res.changed?.length || first) setVersion((v) => v + 1); // reload the preview with the new content
+        say({
+          role: "ai",
+          text: first ? "Your website is written! Have a look on the right, and tell me what to change." : (res.reply ?? describeChanges(res.changed)),
+        });
       } else say({ role: "ai", text: res.error ?? "Something went wrong. Please try again.", error: true });
     });
   }
@@ -267,7 +270,7 @@ export function PreviewStudio(props: Props) {
           </div>
         </div>
 
-        {/* The frame is absolutely positioned so it always fills the panel's full height. */}
+        {/* Absolutely positioned with explicit heights: iframes don't stretch to top/bottom like normal boxes. */}
         <div className="relative min-h-[360px] flex-1 bg-[#060808]">
           <iframe
             key={version}
@@ -275,7 +278,7 @@ export function PreviewStudio(props: Props) {
             title={`${name} website preview`}
             className={`absolute bg-white ${
               device === "phone"
-                ? "top-4 bottom-4 left-1/2 w-[390px] max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-[28px] ring-8 ring-black"
+                ? "top-4 left-1/2 h-[calc(100%-2rem)] w-[390px] max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-[28px] ring-8 ring-black"
                 : "inset-0 h-full w-full"
             }`}
           />
