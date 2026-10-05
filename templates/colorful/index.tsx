@@ -6,6 +6,7 @@ import { slots } from "./schema";
 import { EnquiryForm } from "../shared/EnquiryForm";
 import { ImageSlot } from "../shared/ImageSlot";
 import { isPhone, telHref, whatsappHref } from "../shared/phone";
+import { Gallery, galleryKeys, SiteFooter, SiteNav } from "../shared/SiteChrome";
 import type { CoreContent, TemplateDefinition, TemplateProps } from "../types";
 
 const display = Bricolage_Grotesque({ subsets: ["latin"], weight: ["600", "800"], variable: "--font-display" });
@@ -17,16 +18,23 @@ export type ColorfulContent = CoreContent & {
 
 function ColorfulTemplate({ businessName, city, content, palette, images, siteId }: TemplateProps<ColorfulContent>) {
   const { hero, about, services, contact, faq } = content;
+  const gallery = galleryKeys(images, ["hero"]);
   return (
     <div
+      id="top"
       style={paletteVars(palette)}
       className={`${display.variable} ${body.variable} bg-(--c-bg) font-(family-name:--font-body) text-(--c-ink)`}
     >
+      <SiteNav
+        businessName={businessName}
+        city={city}
+        phone={contact.phone}
+        hasGallery={gallery.length > 0}
+        className="bg-(--c-accent) text-(--c-accent-ink)"
+        brandClassName="font-(family-name:--font-display) text-xl font-extrabold"
+        ctaClassName="rounded-full bg-(--c-bg) px-5 py-2 text-(--c-ink) transition hover:-translate-y-0.5"
+      />
       <section className="bg-(--c-accent) text-(--c-accent-ink)">
-        <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <span className="font-(family-name:--font-display) text-xl font-extrabold">{businessName}</span>
-          <span className="rounded-full border border-current/30 px-3 py-1 text-sm">{city}</span>
-        </header>
         <div className="mx-auto grid max-w-6xl gap-10 px-6 pt-10 pb-16 md:grid-cols-[1.3fr_1fr] md:items-end md:pb-24">
           <div>
             <h1 className="font-(family-name:--font-display) text-5xl leading-[0.95] font-extrabold md:text-7xl">
@@ -59,13 +67,13 @@ function ColorfulTemplate({ businessName, city, content, palette, images, siteId
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 py-20">
+      <section id="about" className="mx-auto max-w-6xl scroll-mt-24 px-6 py-20">
         <p className="max-w-3xl font-(family-name:--font-display) text-2xl leading-snug font-semibold md:text-3xl">
           {about.body}
         </p>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-20">
+      <section id="services" className="mx-auto max-w-6xl scroll-mt-24 px-6 pb-20">
         <h2 className="font-(family-name:--font-display) text-3xl font-extrabold">Services</h2>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {services.map((s, i) => (
@@ -84,11 +92,14 @@ function ColorfulTemplate({ businessName, city, content, palette, images, siteId
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl grid-cols-3 gap-4 px-6 pb-20">
-        {["gallery1", "gallery2", "gallery3"].map((key, i) => (
-          <ImageSlot key={key} images={images} slot={key} label={`Photo ${i + 1}`} className="aspect-square w-full rounded-2xl" />
-        ))}
-      </section>
+      {gallery.length > 0 && (
+        <section id="gallery" className="mx-auto max-w-6xl scroll-mt-24 px-6 pb-20">
+          <h2 className="font-(family-name:--font-display) text-3xl font-extrabold">Gallery</h2>
+          <div className="mt-8">
+            <Gallery images={images} keys={gallery} itemClassName="rounded-2xl" />
+          </div>
+        </section>
+      )}
 
       <section className="bg-(--c-surface)">
         <div className="mx-auto max-w-3xl px-6 py-20">
@@ -109,7 +120,7 @@ function ColorfulTemplate({ businessName, city, content, palette, images, siteId
         </div>
       </section>
 
-      <section id="enquire" className="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2">
+      <section id="enquire" className="mx-auto scroll-mt-24 grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2">
         <div>
           <h2 className="font-(family-name:--font-display) text-4xl font-extrabold">Say hello</h2>
           <p className="mt-6 text-lg">{contact.address}</p>
@@ -128,9 +139,15 @@ function ColorfulTemplate({ businessName, city, content, palette, images, siteId
         </div>
       </section>
 
-      <footer className="bg-(--c-ink) px-6 py-8 text-center text-sm text-(--c-bg)/70">
-        {businessName} · {city}
-      </footer>
+      <SiteFooter
+        businessName={businessName}
+        city={city}
+        content={content}
+        hasGallery={gallery.length > 0}
+        className="bg-(--c-ink) text-(--c-bg)"
+        brandClassName="font-(family-name:--font-display) text-2xl font-extrabold"
+        headingClassName="text-(--c-accent)"
+      />
     </div>
   );
 }

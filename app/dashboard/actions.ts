@@ -33,8 +33,8 @@ const FromGoogle = Look.extend({
 export type BuildInput = Record<string, string | undefined>;
 export type StartBuildResult = { error?: string; siteId?: string; place?: ImportedPlace };
 
-// Google photos go straight into the template's image slots, in order.
-const IMAGE_SLOTS = ["hero", "about", "gallery1", "gallery2", "gallery3"];
+// Google photos go straight into the template's image slots, in order; the rest fill the gallery.
+const imageSlot = (i: number) => (i === 0 ? "hero" : i === 1 ? "about" : `gallery${i - 1}`);
 
 /**
  * POST /api/sites from the spec, as a Server Action. Step 1 of the building page:
@@ -73,7 +73,7 @@ export async function startBuild(input: BuildInput): Promise<StartBuildResult> {
       owner_notes: place.summary?.slice(0, 300) ?? null,
       place_id: place.placeId,
       place_json: place,
-      images_json: Object.fromEntries(place.photos.slice(0, IMAGE_SLOTS.length).map((p, i) => [IMAGE_SLOTS[i], p.uri])),
+      images_json: Object.fromEntries(place.photos.map((p, i) => [imageSlot(i), p.uri])),
     };
   } else {
     const parsed = Described.safeParse(input);

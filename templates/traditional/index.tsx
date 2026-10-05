@@ -6,6 +6,7 @@ import { slots } from "./schema";
 import { EnquiryForm } from "../shared/EnquiryForm";
 import { ImageSlot } from "../shared/ImageSlot";
 import { isPhone, telHref, whatsappHref } from "../shared/phone";
+import { Gallery, galleryKeys, SiteFooter, SiteNav } from "../shared/SiteChrome";
 import type { CoreContent, TemplateDefinition, TemplateProps } from "../types";
 
 const display = Marcellus({ subsets: ["latin"], weight: "400", variable: "--font-display" });
@@ -29,18 +30,30 @@ function Ornament() {
 
 function TraditionalTemplate({ businessName, city, content, palette, images, siteId }: TemplateProps<TraditionalContent>) {
   const { hero, about, services, contact, highlights } = content;
+  const gallery = galleryKeys(images, ["hero", "about"]);
   return (
     <div
+      id="top"
       style={paletteVars(palette)}
       className={`${display.variable} ${body.variable} bg-(--c-bg) font-(family-name:--font-body) text-(--c-ink)`}
     >
-      <header className="border-b-4 border-double border-(--c-accent)/40 px-6 pt-12 pb-10 text-center">
+      <SiteNav
+        businessName={businessName}
+        city={city}
+        phone={contact.phone}
+        hasGallery={gallery.length > 0}
+        className="border-b border-(--c-accent)/25 bg-(--c-bg)/90 backdrop-blur"
+        brandClassName="font-(family-name:--font-display) text-lg"
+        ctaClassName="border border-(--c-accent) px-4 py-2 tracking-wide text-(--c-accent) transition hover:bg-(--c-accent) hover:text-(--c-accent-ink)"
+      />
+
+      <div className="border-b-4 border-double border-(--c-accent)/40 px-6 pt-12 pb-10 text-center">
         <p className="text-sm tracking-[0.3em] text-(--c-muted) uppercase">Est. in {city}</p>
         <h1 className="mt-3 font-(family-name:--font-display) text-4xl md:text-6xl">{businessName}</h1>
         <div className="mt-5">
           <Ornament />
         </div>
-      </header>
+      </div>
 
       <section className="mx-auto max-w-5xl px-6 py-14 text-center">
         <h2 className="font-(family-name:--font-display) text-3xl leading-snug md:text-4xl">{hero.headline}</h2>
@@ -66,7 +79,7 @@ function TraditionalTemplate({ businessName, city, content, palette, images, sit
         </div>
       </section>
 
-      <section className="bg-(--c-surface)">
+      <section id="about" className="scroll-mt-24 bg-(--c-surface)">
         <div className="mx-auto grid max-w-5xl items-center gap-10 px-6 py-16 md:grid-cols-2">
           <ImageSlot images={images} slot="about" label="Owner or interior" className="aspect-square w-full" />
           <div>
@@ -76,7 +89,7 @@ function TraditionalTemplate({ businessName, city, content, palette, images, sit
         </div>
       </section>
 
-      <section className="mx-auto max-w-3xl px-6 py-16">
+      <section id="services" className="mx-auto max-w-3xl scroll-mt-24 px-6 py-16">
         <h2 className="text-center font-(family-name:--font-display) text-3xl">Our Services</h2>
         <div className="mt-4">
           <Ornament />
@@ -105,7 +118,17 @@ function TraditionalTemplate({ businessName, city, content, palette, images, sit
         </div>
       </section>
 
-      <section id="enquire" className="mx-auto grid max-w-5xl gap-12 px-6 py-16 md:grid-cols-2">
+      {gallery.length > 0 && (
+        <section id="gallery" className="mx-auto max-w-5xl scroll-mt-24 px-6 pt-16">
+          <h2 className="text-center font-(family-name:--font-display) text-3xl">Gallery</h2>
+          <div className="mt-4 mb-10">
+            <Ornament />
+          </div>
+          <Gallery images={images} keys={gallery} itemClassName="border border-(--c-accent)/30 p-1.5" />
+        </section>
+      )}
+
+      <section id="enquire" className="mx-auto scroll-mt-24 grid max-w-5xl gap-12 px-6 py-16 md:grid-cols-2">
         <div>
           <h2 className="font-(family-name:--font-display) text-3xl">Visit Us</h2>
           <p className="mt-6 text-lg">{contact.address}</p>
@@ -122,9 +145,15 @@ function TraditionalTemplate({ businessName, city, content, palette, images, sit
         </div>
       </section>
 
-      <footer className="border-t-4 border-double border-(--c-accent)/40 px-6 py-8 text-center text-sm text-(--c-muted)">
-        {businessName} · {city}
-      </footer>
+      <SiteFooter
+        businessName={businessName}
+        city={city}
+        content={content}
+        hasGallery={gallery.length > 0}
+        className="border-t-4 border-double border-(--c-accent)/40 bg-(--c-surface)"
+        brandClassName="font-(family-name:--font-display) text-2xl"
+        headingClassName="text-(--c-accent)"
+      />
     </div>
   );
 }

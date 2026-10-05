@@ -3,11 +3,11 @@ import "server-only";
 /**
  * Turns a Google Maps / Business Profile link into shop details by running
  * Apify's Google Maps Scraper (compass/crawler-google-places). Needs APIFY_API_TOKEN.
- * Typical cost is well under $0.01 per import (one place, details + up to 6 images, no reviews).
+ * Typical cost is well under $0.01 per import (one place, details + up to 10 images, no reviews).
  */
 
 const ACTOR = "compass~crawler-google-places";
-const MAX_PHOTOS = 6;
+const MAX_PHOTOS = 10;
 
 export type ImportedPlace = {
   placeId: string;
